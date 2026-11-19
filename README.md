@@ -23,6 +23,8 @@ The Diana transaction memo contains the commitment to the roster, questions and 
 
 ## Independent verification
 
+For the published round, download the ZIP and unzip it on any computer with Node 24. It includes the signed packet, a standalone verifier, all seven Diana receipts and a short guide. Run `node verify-round.mjs diana.json` in that folder, even with the website and network offline. [Download the complete verification kit](https://github.com/tang-vu/blind-crossing/releases/download/diana-round-1/blind-crossing-diana-round-1.zip)
+
 Use Node 24. Clone this repository, run `npm ci`, then disconnect if you wish. The verifier needs only the JSON bundle and installed code. It runs without a web server or wallet. Deployment also produces a [single-file verifier](https://tang-vu.github.io/blind-crossing/verify-round.mjs) that runs under Node without installing packages.
 
 ```sh
