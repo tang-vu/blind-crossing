@@ -23,6 +23,8 @@ To try the encryption by yourself, open the single-device rehearsal. It creates 
 | QR room | Three isolated participant browsers on one computer completed a self-hosted room using the real Diana registry. All three participants and the coordinator independently verified the same downloaded counts. The public room also passed its rehearsal and disconnect checks. |
 | Physical field trial | **0 confirmed adult participant devices.** Mobile-sized browser sessions count as software tests. First-time user comprehension timing is pending. |
 
+In a public QR rehearsal, three emulated devices completed a signed round, lost a participant after two submissions and completed a fresh round. All remaining screens closed the incomplete round in 19.5 seconds. [Device profiles, observations and signed downloads](evidence/mobile-room/README.md)
+
 The map and signed packet represent two different surveys. The downloadable planner dataset contains deliberately public synthetic routes. A private room exports the roster, fixed proposals, signatures and masked contributions.
 
 The Diana transaction memo contains the commitment to the roster, questions and signed contributions. Its receipt records successful execution at **14:02:39 UTC**. The public bundle includes all six key registration transaction IDs. Select **Testnet** in the explorer header to view the transaction. [Diana receipt](https://api-testnet.qore.host/cosmos/tx/v1beta1/txs/8D96D299A0B758AAE71EFA9DCB36EC2840F73CD9A14CB25F6A0A5EED886250B9) · [Explorer](https://explore.qore.network/tx/8D96D299A0B758AAE71EFA9DCB36EC2840F73CD9A14CB25F6A0A5EED886250B9) · [Archived packet](evidence/diana.json)

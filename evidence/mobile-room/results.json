@@ -1,0 +1,134 @@
+{
+  "testedAt": "2026-11-19T15:32:39.655Z",
+  "url": "https://tang-vu.github.io/blind-crossing/room.html",
+  "physicalMachines": 1,
+  "physicalParticipantDevices": 0,
+  "qrDecodedFromRenderedPixels": true,
+  "profiles": [
+    {
+      "profile": "Pixel 7",
+      "engine": "Chromium (Microsoft Edge)",
+      "version": "157.0.4341.46",
+      "screen": [
+        412,
+        915
+      ],
+      "viewport": [
+        412,
+        839
+      ],
+      "touchPoints": 1,
+      "webRTC": true
+    },
+    {
+      "profile": "Galaxy S24",
+      "engine": "Chromium (Microsoft Edge)",
+      "version": "157.0.4341.46",
+      "screen": [
+        360,
+        780
+      ],
+      "viewport": [
+        360,
+        780
+      ],
+      "touchPoints": 1,
+      "webRTC": true
+    },
+    {
+      "profile": "Galaxy Tab S9",
+      "engine": "Chromium (Microsoft Edge)",
+      "version": "157.0.4341.46",
+      "screen": [
+        640,
+        1024
+      ],
+      "viewport": [
+        640,
+        1024
+      ],
+      "touchPoints": 1,
+      "webRTC": true
+    }
+  ],
+  "ios": {
+    "profile": "iPhone 15",
+    "engine": "Playwright WebKit on Windows",
+    "version": "27.2",
+    "planner": [
+      62,
+      90
+    ],
+    "diana": {
+      "AB": 1,
+      "AC": 2
+    },
+    "webRTC": false,
+    "viewport": [
+      393,
+      659
+    ],
+    "touchPoints": 0
+  },
+  "results": [
+    {
+      "case": "complete",
+      "roundId": "519d5277-dedb-452a-aed9-22bb054d81a9",
+      "manifestHash": "3dfaa0db3224b043f4a7c1ad2d3786c45ee0ef7df6f96872970be63b24087871",
+      "routes": [
+        [
+          "A",
+          "B"
+        ],
+        [
+          "C"
+        ],
+        [
+          "D",
+          "H"
+        ]
+      ],
+      "totals": {
+        "AB": 1,
+        "AC": 2
+      },
+      "matchingDownloads": 4,
+      "packetSha256": "85295b08a82039a39313a9fa433b8c379f0a1aec1684ba8ffa447f3718d0538a",
+      "commitment": "a41d65c2d2c5360c07a0cb1a9452f9dfd7562b85679d65052acdaa31b03317d3",
+      "missingMemberIdentified": true
+    },
+    {
+      "case": "disconnect",
+      "roundId": "92996e9d-e627-4f03-9142-991c9f296b16",
+      "manifestHash": "93479d844a8c89d0ac8795cf751595a637665f14de3dd51f28a0fa2e4de5bf68",
+      "submitted": 2,
+      "closedOnSurvivingScreens": 3,
+      "resultAvailable": false,
+      "status": "Round closed. A participant stopped responding. Create a new round.",
+      "detectionSeconds": 19.5
+    },
+    {
+      "case": "fresh-retry",
+      "roundId": "e73dbda5-fb02-4bc7-b27e-53fe756a0d4a",
+      "manifestHash": "7f34bed0b73f9f599206dd41e127d4de5e4cecf0e3954ac30ea6c50a5236df23",
+      "routes": [
+        [],
+        [
+          "B"
+        ],
+        [
+          "A",
+          "C"
+        ]
+      ],
+      "totals": {
+        "AB": 2,
+        "AC": 1
+      },
+      "matchingDownloads": 4,
+      "packetSha256": "ada3003d9492af0ce41a60ff5dd3184b05ad5a64d0fdcf292d24349add23b9df",
+      "commitment": "581b51f0ae5e7bcd90c6540af0088534c5cc42994767c347a4c6b414255f7383",
+      "missingMemberIdentified": true
+    }
+  ]
+}
