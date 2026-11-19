@@ -1,5 +1,7 @@
 # Blind Crossing
 
+[![Built on QoreChain](https://build.qorechain.io/badge/blind-crossing.svg)](https://build.qorechain.io/p/blind-crossing)
+
 Choose two school crossings. Reach the most students. Keep each family's route private.
 
 [Play the planner](https://tang-vu.github.io/blind-crossing/) · [Open a live room](https://tang-vu.github.io/blind-crossing/room.html) · [Watch the walkthrough](https://tang-vu.github.io/blind-crossing/planner-walkthrough.mp4) · [Download the signed Diana round](https://tang-vu.github.io/blind-crossing/diana.json)
@@ -100,6 +102,8 @@ The UI counts connected browser wallets. A facilitator records the actual number
 - This prototype aborts incomplete rounds. It does not implement dropout recovery, differential privacy, zero-knowledge input proofs or protection from a compromised device. The CLI demonstration runs multiple processes under one operating-system account.
 
 ## Data and credits
+
+The development record describes the entrant's contributions, the work performed with Codex and the tests that verified the result. [AI usage](AI_USAGE.md)
 
 The six disjoint ABC groups have sizes 10 (ABC), 43 (AB), 7 (A), 2 (B), 30 (C) and 8 (D–H). The last group is distributed 2, 2, 2, 1, 1. The generator and calculation are in [src/simulation.mjs](src/simulation.mjs).
 
