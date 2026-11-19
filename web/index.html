@@ -100,15 +100,18 @@
             <a href="./simulation.json" download>Download simulation data</a>
           </article>
           <article>
-            <h3 id="runTitle">Signed three-client rehearsal</h3>
-            <p id="runInfo">
-              Three processes on one computer exchanged masked contributions.
-              The verifier checks signatures and reports any missing member.
+            <h3>Diana testnet round</h3>
+            <p>
+              Three client processes on one computer signed masked contributions.
+              Diana recorded their combined commitment. Download the round to
+              reproduce both survey totals independently.
             </p>
-            <a id="bundle" href="./rehearsal.json" download
+            <a id="bundle" href="./diana.json" data-commitment="{{dianaCommitment}}" download
               >Download signed round</a
             >
             <button class="textbutton" id="inspect">Check bundle</button>
+            <p><a href="https://api-testnet.qore.host/cosmos/tx/v1beta1/txs/{{dianaAnchor}}">Diana receipt</a>
+              <a href="https://explore.qore.network/tx/{{dianaAnchor}}">Explorer (select Testnet)</a></p>
           </article>
         </div>
         <div id="inspection" hidden>
@@ -129,7 +132,7 @@
     <footer>
       <div class="frame">
         <span>Blind Crossing</span>
-        <a href="./planner-walkthrough.mp4">Watch the 43-second demo</a>
+        <a href="./planner-walkthrough.mp4">Watch the walkthrough</a>
         <a href="https://github.com/tang-vu/blind-crossing">Source &amp; protocol</a>
       </div>
     </footer>

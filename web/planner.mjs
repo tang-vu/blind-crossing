@@ -154,7 +154,7 @@ async function inspect(omit) {
     if (!response.ok) throw Error("Download failed");
     bundle = await response.json();
     if (omit) bundle.contributions.pop();
-    const counts = verifyBundle(bundle);
+    const counts = verifyBundle(bundle, $("bundle").dataset.commitment);
     $("checks").textContent =
       "Signatures and bundle hash verified for " +
       bundle.round.members.length +
@@ -169,20 +169,3 @@ async function inspect(omit) {
 }
 $("inspect").onclick = () => inspect(false);
 $("omit").onclick = () => inspect(true);
-async function loadEvidence() {
-  const response = await fetch("./status.json");
-  if (!response.ok) return;
-  const status = await response.json();
-  if (!status.anchor) return;
-  $("runTitle").textContent = "Diana testnet round";
-  $("runInfo").textContent =
-    status.members + " registered wallets contributed. Check their key registrations and the round commitment using the standalone verifier.";
-  $("bundle").href = "./diana.json";
-  const a = document.createElement("a");
-  a.href = "https://explore.qore.network/tx/" + status.anchor;
-  a.textContent = "Explorer transaction";
-  $("runInfo").after(a);
-}
-loadEvidence().catch(() => {
-  /* The bundled rehearsal remains available offline. */
-});

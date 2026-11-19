@@ -25,8 +25,8 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
-      - name: Independently verify the published round on this runner
-        run: node dist/verify-round.mjs evidence/rehearsal.json --expect=e14194d716ca214aeb34d2e0be50e223cd2e411cc7ab61a44ef7039c17b30fce
+      - name: Verify the Diana round and seven committed transactions on this runner
+        run: node dist/verify-round.mjs dist/diana.json --chain --expect=c4bb29c20c627198f7b07895448ea165a81bc785c99a3b55d97297eaae51bbcf
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

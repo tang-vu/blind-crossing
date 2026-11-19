@@ -19,7 +19,6 @@ const out = await build({
   legalComments: "linked",
 });
 for (const name of [
-  "index.html",
   "room.html",
   "mark.svg",
   "map.svg",
@@ -30,21 +29,15 @@ await copyFile("evidence/rehearsal.json", "dist/rehearsal.json");
 for (const name of ["cover.png", "planner-walkthrough.mp4"]) {
   await copyFile("media/" + name, "dist/" + name);
 }
-let status = { anchor: null };
-let archived;
-try {
-  archived = await readFile("evidence/diana.json", "utf8");
-} catch (e) {
-  if (e.code !== "ENOENT") throw e;
-}
-if (archived) {
-  const round = JSON.parse(archived);
-  verifyBundle(round);
-  if (round.evidence) {
-    status = { anchor: await verifyEvidence(round), members: round.round.members.length };
-    await writeFile("dist/diana.json", archived);
-  }
-}
+const archived = await readFile("evidence/diana.json", "utf8");
+const round = JSON.parse(archived);
+verifyBundle(round);
+const status = { anchor: await verifyEvidence(round), members: round.round.members.length };
+const planner = (await readFile("web/index.html", "utf8"))
+  .replaceAll("{{dianaAnchor}}", status.anchor)
+  .replaceAll("{{dianaCommitment}}", round.commitment);
+await writeFile("dist/index.html", planner);
+await writeFile("dist/diana.json", archived);
 await writeFile("dist/status.json", JSON.stringify(status));
 await writeFile(
   "dist/simulation.json",

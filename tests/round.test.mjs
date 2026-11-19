@@ -29,6 +29,17 @@ test("published rehearsal verifies with its independently pinned digest", () => 
     { AB: 1, AC: 2 },
   );
 });
+test("Diana packet reproduces the published counts and identifies a missing signer", () => {
+  const packet = JSON.parse(
+    readFileSync(new URL("../evidence/diana.json", import.meta.url)),
+  );
+  assert.deepEqual(verifyBundle(packet), { AB: 1, AC: 2 });
+  packet.contributions.pop();
+  assert.throws(
+    () => verifyBundle(packet),
+    { message: "Missing contribution: qor1vnh8z6ppwg4v0w26cl3vhd9e8lnt05p5ach03e" },
+  );
+});
 test("member omissions and repeats are reported even if the bundle is rehashed", () => {
   const missing = structuredClone(source);
   const removed = missing.contributions.pop();
