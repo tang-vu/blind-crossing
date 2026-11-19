@@ -31,6 +31,7 @@ let peer,
   round,
   phase = "idle",
   deadline,
+  heartbeat,
   fileUrl;
 const locked = () => phase !== "lobby";
 const show = (id, visible) => {
@@ -40,8 +41,15 @@ function stop(reason) {
   if (phase === "done" || phase === "aborted") return;
   phase = "aborted";
   clearTimeout(deadline);
-  for (const c of clients.values())
-    if (c.link.open) c.link.send({ type: "abort", reason });
+  clearInterval(heartbeat);
+  for (const c of clients.values()) {
+    if (!c.link.open) continue;
+    try {
+      c.link.send({ type: "abort", reason });
+    } catch {
+      // A failed channel cannot receive the notice. Continue notifying the group.
+    }
+  }
   status("Round closed. " + reason);
   for (const id of ["accept", "submit", "lock", "picker", "invite", "begin"])
     show(id, false);
@@ -54,6 +62,25 @@ function timeout(ms = 300000) {
   deadline = setTimeout(
     () => stop("The room timed out. Start again with fresh secrets."),
     ms,
+  );
+}
+// Count unanswered probes, so pausing the coordinator's own timer for a while
+// does not immediately expire healthy devices when its tab resumes.
+function monitorParticipants() {
+  const watched = [...clients.values()].filter((c) => c.supportsHeartbeat);
+  if (!watched.length) return;
+  heartbeat = setInterval(
+    handle(() => {
+      for (const c of watched) {
+        if (c.unanswered >= 4) {
+          stop("A participant stopped responding. Create a new round.");
+          return;
+        }
+        c.unanswered++;
+        c.link.send({ type: "ping" });
+      }
+    }),
+    4000,
   );
 }
 function handle(fn) {
@@ -91,6 +118,7 @@ function finish(bundle) {
   );
   phase = "done";
   clearTimeout(deadline);
+  clearInterval(heartbeat);
   status(
     "Verified " +
       bundle.contributions.length +
@@ -139,10 +167,16 @@ function hostMessage(c, message) {
       "Repeated wallet",
     );
     c.member = data;
+    c.supportsHeartbeat = message.supportsHeartbeat === true;
+    c.unanswered = 0;
     refresh();
     return;
   }
   check(c.member && round, "Round has not been locked");
+  if (type === "pong" && c.supportsHeartbeat) {
+    c.unanswered = 0;
+    return;
+  }
   if (type === "accept") {
     check(
       phase === "confirm" && !c.accepted && data === hash(round),
@@ -205,7 +239,7 @@ function connectGuest() {
   server.on(
     "open",
     handle(() => {
-      server.send({ type: "hello", data: local.member });
+      server.send({ type: "hello", data: local.member, supportsHeartbeat: true });
       status("Joined. Waiting for the coordinator to lock the roster.");
       timeout();
     }),
@@ -214,6 +248,10 @@ function connectGuest() {
     "data",
     handle(async ({ type, data, reason }) => {
       if (phase === "aborted" || phase === "done") return;
+      if (type === "ping" && round) {
+        server.send({ type: "pong" });
+        return;
+      }
       if (type === "abort") {
         stop(reason);
         return;
@@ -361,6 +399,7 @@ $("lock").onclick = handle(() => {
   show("invite", false);
   status("Ask everyone to compare the fingerprint and confirm.");
   broadcast({ type: "manifest", data: round });
+  monitorParticipants();
   timeout();
 });
 $("accept").onclick = handle(() => {
@@ -407,6 +446,7 @@ if (target) {
 showMode();
 addEventListener("pagehide", () => {
   clearTimeout(deadline);
+  clearInterval(heartbeat);
   peer?.destroy();
   if (fileUrl) URL.revokeObjectURL(fileUrl);
 });

@@ -1,17 +1,17 @@
 // Start npm start after building. Supply BROWSER_CHANNEL=msedge to use an installed Edge.
 import assert from "node:assert/strict";
-import { chromium } from "playwright";
-const browser = await chromium.launch({
-  channel: process.env.BROWSER_CHANNEL || undefined,
-});
+import { chromium, devices } from "playwright";
+const launchOptions = { channel: process.env.BROWSER_CHANNEL || undefined };
+const browser = await chromium.launch(launchOptions);
+const participantBrowsers = [];
 const base = process.env.TEST_URL || "http://127.0.0.1:4173";
 const pages = [];
-async function page(mobile = false) {
-  const p = await browser.newPage({
-    viewport: mobile
-      ? { width: 390, height: 844 }
-      : { width: 1440, height: 900 },
-  });
+async function page(profile) {
+  const deviceBrowser = profile ? await chromium.launch(launchOptions) : browser;
+  if (profile) participantBrowsers.push(deviceBrowser);
+  const p = await deviceBrowser.newPage(
+    profile ? devices[profile] : { viewport: { width: 1440, height: 900 } },
+  );
   pages.push(p);
   p.setDefaultTimeout(12000);
   p.on("pageerror", (e) => console.error("Browser error", e.message));
@@ -47,22 +47,22 @@ try {
   await host.waitForSelector("#join:visible");
   const link = await host.locator("#join").getAttribute("href"),
     guests = [];
-  for (let i = 0; i < 3; i++) {
-    const guest = await page(true);
+  for (const profile of ["Pixel 7", "Galaxy S24", "Galaxy Tab S9"]) {
+    const guest = await page(profile);
     guests.push(guest);
     await guest.goto(link);
-    await guest.locator("#begin").click();
+    await guest.locator("#begin").tap();
     await guest.waitForFunction(() =>
       document.querySelector("#status").textContent.startsWith("Joined."),
     );
   }
   await host.locator("#lock").click();
-  for (const g of guests) await g.locator("#accept").click();
+  for (const g of guests) await g.locator("#accept").tap();
   for (const [i, g] of guests.entries()) {
     await g
       .getByRole("checkbox", { name: ["A", "C", "D"][i], exact: true })
-      .check();
-    await g.locator("#submit").click();
+      .tap();
+    await g.locator("#submit").tap();
   }
   for (const p of [host, ...guests]) {
     await p.waitForSelector("#download:visible");
@@ -82,12 +82,20 @@ try {
       await g.locator("#begin").click();
     }
     await host.locator("#lock").click();
-    await guests[0].close();
+    for (const g of guests) await g.locator("#accept").tap();
+    for (const g of guests.slice(0, 2)) await g.locator("#submit").tap();
     await host.waitForFunction(() =>
-      document.querySelector("#status").textContent.includes("disconnected"),
+      document.querySelector("#status").textContent.startsWith("2 of 3"),
     );
-    assert.equal(await host.locator("#download").isVisible(), false);
-    console.log("Locked round aborted on disconnect.");
+    await participantBrowsers[2].close();
+    for (const screen of [host, ...guests.slice(0, 2)]) {
+      await screen.waitForFunction(() =>
+        document.querySelector("#status").textContent.startsWith("Round closed."),
+        null, { timeout: 35000 },
+      );
+      assert.equal(await screen.locator("#download").getAttribute("href"), null);
+    }
+    console.log("Closing the third browser process aborted the round on all remaining screens after two submissions.");
   }
   console.log(
     "Passed planner, drag, evidence, and three-browser room on one computer.",
@@ -98,5 +106,6 @@ try {
       console.error(p.url(), await p.locator("#status").allTextContents());
   throw e;
 } finally {
+  await Promise.allSettled(participantBrowsers.map((b) => b.close()));
   await browser.close();
 }
