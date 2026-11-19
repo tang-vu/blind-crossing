@@ -2,7 +2,9 @@
 
 Choose two school crossings. Reach the most students. Keep each family's route private.
 
-[Play the planner](https://tang-vu.github.io/blind-crossing/) · [Open a live room](https://tang-vu.github.io/blind-crossing/room.html) · [Download the signed rehearsal](evidence/rehearsal.json)
+[Play the planner](https://tang-vu.github.io/blind-crossing/) · [Open a live room](https://tang-vu.github.io/blind-crossing/room.html) · [Watch the 43-second walkthrough](https://tang-vu.github.io/blind-crossing/planner-walkthrough.mp4) · [Download the signed rehearsal](evidence/rehearsal.json)
+
+![Blind Crossing cover showing 28 more students reached among 100 simulated routes](media/cover.png)
 
 ## Try it in a minute
 
@@ -26,6 +28,8 @@ Use Node 24. Clone this repository, run `npm ci`, then disconnect if you wish. T
 npm run verify -- evidence/rehearsal.json --expect=e14194d716ca214aeb34d2e0be50e223cd2e411cc7ab61a44ef7039c17b30fce
 # Or use both downloaded files in the same directory
 node verify-round.mjs rehearsal.json
+# Recompute the eight individual totals and 28 pair totals from the planner download
+node verify-round.mjs simulation.json
 ```
 
 To reproduce the missing-member test, remove one signed contribution from a copy. The CLI prints the missing wallet address and exits with code 1. The evidence panel offers the same experiment in the browser.
@@ -72,6 +76,12 @@ qor1vnh8z6ppwg4v0w26cl3vhd9e8lnt05p5ach03e
 Open **Live room → Create room** on a coordinator screen. Invite 3–12 adults to scan its QR code. Each participant creates a temporary wallet on their device. Lock the roster, compare the fingerprint, wallet list and participant count on every screen, then confirm the two questions. Each device selects hypothetical crossings and sends a signed, masked vector. Every participant can download and verify the final packet.
 
 The public QR room runs as an unanchored rehearsal with in-memory keys. GitHub Pages uses PeerJS Cloud for discovery and WebRTC data channels for traffic. The local server includes its own PeerServer. Remote phones need HTTPS for browser cryptography and a reachable signaling service. Use the public link or reverse-proxy the local server with TLS and WebSocket forwarding. Network restrictions can prevent WebRTC connections. Disconnecting after roster lock aborts the round. Start a new room to generate fresh keys and masks.
+
+### Registered wallets on independent devices
+
+The self-hosted HTTPS room also supports a Diana mode. Each adult can provision a dedicated Diana wallet on their own trusted computer with `npm run wallets -- one`, fund that address and run `npm run register -- one`. Then run `node scripts/diana.mjs device one`. It checks both public registries before writing the participant's private `.bc-device` file under `.private/diana/`. Securely transfer it only to that participant's own device. It contains the test wallet's message-signing and decryption secrets. The classical spending key and recovery phrase stay on the provisioning computer.
+
+Select **Use registered Diana wallets** on the self-hosted coordinator before creating the QR invite. Each participant opens their own device file locally. The browser checks the full roster against Diana through the same-origin read-only registry relay before presenting the confirmation or route picker. Download the signed packet. One participating wallet owner can anchor it using their own `one` slot and the anchor command above. Registration receipts from other participants can be recovered from the public chain. Publish the verified packet as `evidence/diana.json` and rebuild to display its explorer link. The registered-device path awaits a funded field run.
 
 The UI counts connected browser wallets. A facilitator records the actual number of physical devices and participating adults separately. Use fictional routes throughout the trial. Measure comprehension from opening the page until a first-time participant can explain the 28-student difference.
 

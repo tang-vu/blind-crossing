@@ -6,6 +6,9 @@ dist/
 .env.*
 *.pem
 *.key
+*.bc-device
+incomplete.json
+round.json
 *.[bB][aA][kK]
 [aA][gG][eE][nN][tT]*.[mM][dD]
 [cC][lL][aA][uU][dD][eE]*.[mM][dD]

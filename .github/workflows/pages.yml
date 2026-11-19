@@ -25,6 +25,8 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      - name: Independently verify the published round on this runner
+        run: node dist/verify-round.mjs evidence/rehearsal.json --expect=e14194d716ca214aeb34d2e0be50e223cd2e411cc7ab61a44ef7039c17b30fce
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

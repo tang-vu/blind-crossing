@@ -1,13 +1,89 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Live room · Blind Crossing</title><link rel="stylesheet" href="./style.css"><link rel="icon" href="./mark.svg"></head>
-<body><header><div class="frame mast"><a class="brand" href="./"><img src="./mark.svg" alt="">Blind Crossing</a><nav aria-label="Main navigation"><a href="./">Planner</a><a href="./room.html" aria-current="page">Live room</a><a href="./#evidence">Evidence</a></nav></div></header>
-<main class="roomwrap"><p class="eyebrow"><span class="line"></span> Live room · unanchored rehearsal</p><h1>Walk a fictional route.</h1>
-<p>Bring 3–12 adult participants. Each person chooses imaginary crossings on their own device. This room asks only about A + B and A + C.</p>
-<section class="roomcard"><h2 id="heading">Open a survey room</h2>
-<p id="intro">Use this screen as the coordinator. The QR code invites participant browsers. Keep this tab open until the round finishes.</p>
-<button class="primary" id="begin">Create room</button><div id="invite" hidden><img id="qr" alt="Scan to join this survey room"><a id="join" class="link">Participant link</a></div>
-<output id="status" role="status"></output><div id="roster" hidden><h3>Participant wallets</h3><ul id="members"></ul><p class="digest" id="fingerprint"></p></div>
-<button class="primary" id="lock" hidden>Lock roster and questions</button><button class="secondary" id="accept" hidden>Roster and questions match</button>
-<fieldset id="picker" hidden><legend>Which crossings does your imaginary route pass?</legend><div class="route" id="choices"></div>
-<button class="primary" id="submit">Send masked contribution</button></fieldset><a id="download" download="blind-crossing-room.json" hidden>Download signed round</a>
-<a href="./room.html" id="restart" hidden>Start a fresh room</a></section>
-<p class="hint">This rehearsal creates temporary wallet keys in browser memory. Participants can infer another person's choices if they share their own. Connection services can see network addresses and timing. Use only hypothetical routes.</p></main><script type="module" src="./room.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Live room · Blind Crossing</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="icon" href="./mark.svg" />
+  </head>
+  <body>
+    <header>
+      <div class="frame mast">
+        <a class="brand" href="./"
+          ><img src="./mark.svg" alt="" />Blind Crossing</a
+        >
+        <nav aria-label="Main navigation">
+          <a href="./">Planner</a
+          ><a href="./room.html" aria-current="page">Live room</a
+          ><a href="./#evidence">Evidence</a>
+        </nav>
+      </div>
+    </header>
+    <main class="roomwrap">
+      <p class="eyebrow">
+        <span class="line"></span
+        ><span id="roommode">Live room · unanchored rehearsal</span>
+      </p>
+      <h1>Walk a fictional route.</h1>
+      <p>
+        Bring 3–12 adult participants. Each person chooses imaginary crossings
+        on their own device. This room asks only about A + B and A + C.
+      </p>
+      <section class="roomcard">
+        <h2 id="heading">Open a survey room</h2>
+        <p id="intro">
+          Use this screen as the coordinator. The QR code invites participant
+          browsers. Keep this tab open until the round finishes.
+        </p>
+        <p id="networkchoice" hidden>
+          <label
+            ><input id="registered" type="checkbox" /> Use registered Diana
+            wallets</label
+          >
+        </p>
+        <p id="devicechoice" hidden>
+          <label
+            >Your private testnet device file
+            <input id="device" type="file" accept=".bc-device"
+          /></label>
+        </p>
+        <button class="primary" id="begin">Create room</button>
+        <div id="invite" hidden>
+          <img id="qr" alt="Scan to join this survey room" /><a
+            id="join"
+            class="link"
+            >Participant link</a
+          >
+        </div>
+        <output id="status" role="status"></output>
+        <div id="roster" hidden>
+          <h3>Participant wallets</h3>
+          <ul id="members"></ul>
+          <p class="digest" id="fingerprint"></p>
+        </div>
+        <button class="primary" id="lock" hidden>
+          Lock roster and questions</button
+        ><button class="secondary" id="accept" hidden>
+          Roster and questions match
+        </button>
+        <fieldset id="picker" hidden>
+          <legend>Which crossings does your imaginary route pass?</legend>
+          <div class="route" id="choices"></div>
+          <button class="primary" id="submit">Send masked contribution</button>
+        </fieldset>
+        <a id="download" download="blind-crossing-room.json" hidden
+          >Download signed round</a
+        >
+        <a href="./room.html" id="restart" hidden>Start a fresh room</a>
+      </section>
+      <p class="hint">
+        Rehearsals create temporary wallet keys in browser memory. Participants
+        can infer another person's choices if they share their own. Connection
+        services can see network addresses and timing. Use only hypothetical
+        routes.
+      </p>
+    </main>
+    <script type="module" src="./room.js"></script>
+  </body>
+</html>
