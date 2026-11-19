@@ -1,41 +1,98 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#173d38">
-  <title>Private round lab · Blind Crossing</title>
-  <link rel="icon" href="./mark.svg"><link rel="stylesheet" href="./style.css"><link rel="stylesheet" href="./lab.css">
-</head>
-<body>
-  <header><div class="frame mast"><a class="brand" href="./"><img src="./mark.svg" alt="">Blind Crossing</a>
-    <nav aria-label="Main navigation"><a href="./">Planner</a><a href="./room.html">Live room</a><a href="./#evidence">Evidence</a></nav></div></header>
-  <main class="lab">
-    <p class="eyebrow"><span class="line"></span>Single-device rehearsal</p>
-    <h1>Run your own <em>private round.</em></h1>
-    <p class="description">Choose a fictional route for one household. Two sample households join yours. Each wallet signs a masked answer inside a separate browser worker on this device.</p>
-    <section class="bench" aria-labelledby="round-heading">
-      <div class="benchhead"><h2 id="round-heading">Three household wallets</h2><span id="phase">Ready</span></div>
-      <ul class="households">
-        <li><strong>Your household</strong><span>Choose your route</span><code></code></li>
-        <li><strong>Sample household</strong><span>Route through C</span><code></code></li>
-        <li><strong>Sample household</strong><span>Route through D</span><code></code></li>
-      </ul>
-      <p class="fixed">Every wallet agrees to the same two questions before you choose a route. How many households pass A or B? How many pass A or C?</p>
-      <button class="primary" id="prepare">Create three wallets</button>
-      <fieldset id="lab-picker" hidden><legend>Which crossings does your fictional route pass?</legend>
-        <div class="options" id="options"></div>
-        <button class="primary" id="sign">Sign and count</button>
-      </fieldset>
-      <p id="lab-status" role="status"></p>
-      <div id="lab-result" hidden>
-        <div class="labcounts"><div>A + B<strong id="lab-ab"></strong></div><div>A + C<strong id="lab-ac"></strong></div></div>
-        <p>Each total counts households passing at least one of the two crossings. The signed file contains public keys and masked answers.</p>
-        <a class="download" id="lab-download" download="blind-crossing-local-round.json">Download your signed round</a>
-        <button class="secondary" id="reset">Run a fresh round</button>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#173d38" />
+    <title>Private round lab · Blind Crossing</title>
+    <link rel="icon" href="./mark.svg" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./lab.css" />
+  </head>
+  <body>
+    <header>
+      <div class="frame mast">
+        <a class="brand" href="./"
+          ><img src="./mark.svg" alt="" />Blind Crossing</a
+        >
+        <nav aria-label="Main navigation">
+          <a href="./">Planner</a><a href="./room.html">Live room</a
+          ><a href="./lab.html" aria-current="page">Lab</a
+          ><a href="./#evidence">Evidence</a>
+        </nav>
       </div>
-    </section>
-    <p class="scope">These three temporary wallets run on one device. This rehearsal publishes no transaction. The archived Diana round has a public testnet receipt.</p>
-    <div class="lablinks"><a href="./#evidence">Verify the Diana round</a><a href="./room.html">Invite separate devices by QR</a></div>
-  </main>
-  <script type="module" src="./lab.js"></script>
-</body></html>
+    </header>
+    <main class="lab">
+      <p class="eyebrow"><span class="line"></span>Single-device rehearsal</p>
+      <h1>Run your own <em>private round.</em></h1>
+      <p class="description">
+        Choose a fictional route for one household. Two sample households join
+        yours. Each wallet signs a masked answer inside a separate browser
+        worker on this device.
+      </p>
+      <section class="bench" aria-labelledby="round-heading">
+        <div class="benchhead">
+          <h2 id="round-heading">Three household wallets</h2>
+          <span id="phase">Ready</span>
+        </div>
+        <ul class="households">
+          <li>
+            <strong>Your household</strong><span>Choose your route</span
+            ><code></code>
+          </li>
+          <li>
+            <strong>Sample household</strong><span>Route through C</span
+            ><code></code>
+          </li>
+          <li>
+            <strong>Sample household</strong><span>Route through D</span
+            ><code></code>
+          </li>
+        </ul>
+        <p class="fixed">
+          Every wallet agrees to the same two questions before you choose a
+          route. How many households pass A or B? How many pass A or C?
+        </p>
+        <button class="primary" id="prepare">Create three wallets</button>
+        <fieldset id="lab-picker" hidden>
+          <legend>Which crossings does your fictional route pass?</legend>
+          <div class="options" id="options"></div>
+          <button class="primary" id="sign">Sign and count</button>
+        </fieldset>
+        <p id="lab-status" role="status"></p>
+        <div id="lab-result" hidden>
+          <div class="labcounts">
+            <div>A + B<strong id="lab-ab"></strong></div>
+            <div>A + C<strong id="lab-ac"></strong></div>
+          </div>
+          <p>
+            Each total counts households passing at least one of the two
+            crossings. The signed file contains public keys and masked answers.
+          </p>
+          <a
+            class="download"
+            id="lab-download"
+            download="blind-crossing-local-round.json"
+            >Download your signed round</a
+          >
+          <button class="secondary" id="reset">Run a fresh round</button>
+        </div>
+      </section>
+      <p class="scope">
+        The two sample routes are public, so someone can subtract their answers
+        from the totals to infer yours. Use fictional crossings. This round runs
+        on one device. The archived Diana round has a public testnet receipt.
+      </p>
+      <div class="lablinks">
+        <a href="./#evidence">Verify the Diana round</a
+        ><a href="./room.html">Invite separate devices by QR</a>
+      </div>
+    </main>
+    <footer>
+      <div class="frame">
+        <span>Blind Crossing</span><a href="./">Back to the planner</a>
+      </div>
+    </footer>
+    <script type="module" src="./lab.js"></script>
+  </body>
+</html>

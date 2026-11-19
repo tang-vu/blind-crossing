@@ -1,109 +1,282 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#173d38">
-  <meta property="og:image" content="https://tang-vu.github.io/blind-crossing/cover.png">
-  <meta property="og:title" content="Blind Crossing · School crossing planner">
-  <meta name="description" content="Place two crossing guards on a fictional school map. See who gains coverage, then verify a private survey on QoreChain Diana.">
-  <title>Blind Crossing · Crossing planner</title>
-  <link rel="icon" href="./mark.svg">
-  <link rel="stylesheet" href="./style.css">
-  <link rel="stylesheet" href="./planner.css">
-</head>
-<body class="planner">
-  <header><div class="frame mast">
-    <a class="brand" href="./"><img src="./mark.svg" alt="">Blind Crossing</a>
-    <nav aria-label="Main navigation"><a href="./" aria-current="page">Planner</a><a href="./room.html">Live room</a><a href="#evidence">Evidence</a></nav>
-  </div></header>
-  <main class="frame">
-    <section class="intro">
-      <p class="eyebrow"><span class="line"></span>School crossing planner</p>
-      <h1>Two guards. <em>Which crossings?</em></h1>
-      <p>Try covering the two busiest corners. Then move one guard and see who else you reach.</p>
-    </section>
-    <div class="board">
-      <section class="mapcard" aria-labelledby="school">
-        <div class="cardhead"><div class="maptitle"><h2 id="school">Oakfield School</h2><span>Fictional map</span></div>
-          <button class="traffic" id="traffic" aria-pressed="false">Show counts</button>
-        </div>
-        <div class="map" id="map">
-          <img src="./map.svg" alt="Fictional street map of Oakfield School with eight selectable crossings" draggable="false">
-          <div id="markers"></div>
-          <span class="north" aria-hidden="true">↑ N</span>
-          <span class="map-reach" id="map-reach" aria-hidden="true"></span>
-        </div>
-        <div class="mapfoot">
-          <div class="guards">
-            <label><span class="guardnumber first">1</span> Guard 1<select id="g1" aria-label="Guard 1 crossing"></select></label>
-            <label><span class="guardnumber second">2</span> Guard 2<select id="g2" aria-label="Guard 2 crossing"></select></label>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#173d38" />
+    <meta
+      property="og:image"
+      content="https://tang-vu.github.io/blind-crossing/cover.png"
+    />
+    <meta
+      property="og:title"
+      content="Blind Crossing · School crossing planner"
+    />
+    <meta
+      name="description"
+      content="Place two crossing guards on a fictional school map. See who gains coverage, then verify a private survey on QoreChain Diana."
+    />
+    <title>Blind Crossing · Crossing planner</title>
+    <link rel="icon" href="./mark.svg" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./planner.css" />
+  </head>
+  <body class="planner">
+    <header>
+      <div class="frame mast">
+        <a class="brand" href="./"
+          ><img src="./mark.svg" alt="" />Blind Crossing</a
+        >
+        <nav aria-label="Main navigation">
+          <a href="./" aria-current="page">Planner</a
+          ><a href="./room.html">Live room</a><a href="./lab.html">Lab</a
+          ><a href="#evidence">Evidence</a>
+        </nav>
+      </div>
+    </header>
+    <main class="frame">
+      <section class="intro">
+        <p class="eyebrow"><span class="line"></span>School crossing planner</p>
+        <h1>Two guards. <em>Which crossings?</em></h1>
+        <p>
+          Try covering the two busiest corners. Then move one guard and see who
+          else you reach.
+        </p>
+      </section>
+      <div class="board">
+        <section class="mapcard" aria-labelledby="school">
+          <div class="cardhead">
+            <div class="maptitle">
+              <h2 id="school">Oakfield School</h2>
+              <span>Fictional map</span>
+            </div>
+            <button class="traffic" id="traffic" aria-pressed="false">
+              Show counts
+            </button>
           </div>
-          <p>Drag a guard, or tap a guard and then an open crossing.</p>
+          <div class="map" id="map">
+            <img
+              src="./map.svg"
+              alt="Fictional street map of Oakfield School with eight selectable crossings"
+              draggable="false"
+            />
+            <div id="markers"></div>
+            <span class="north" aria-hidden="true">↑ N</span>
+            <span class="map-reach" id="map-reach" aria-hidden="true"></span>
+          </div>
+          <div class="mapfoot">
+            <div class="guards">
+              <label
+                ><span class="guardnumber first">1</span> Guard 1<select
+                  id="g1"
+                  aria-label="Guard 1 crossing"
+                ></select
+              ></label>
+              <label
+                ><span class="guardnumber second">2</span> Guard 2<select
+                  id="g2"
+                  aria-label="Guard 2 crossing"
+                ></select
+              ></label>
+            </div>
+            <p>Drag a guard, or tap a guard and then an open crossing.</p>
+          </div>
+        </section>
+        <section class="panel reach" aria-label="Student reach">
+          <div class="pairline">
+            <h2>Student reach</h2>
+            <span class="pairflag" id="pair-label"></span>
+          </div>
+          <div class="scoreline">
+            <p class="score">
+              <strong id="score"></strong
+              ><span> / <span id="size"></span></span>
+            </p>
+            <span id="difference" class="difference" hidden></span>
+          </div>
+          <p class="scorelabel">students pass at least one guarded crossing</p>
+          <figure class="distribution">
+            <div id="marks" aria-hidden="true"></div>
+            <figcaption>Each dot is one simulated student.</figcaption>
+          </figure>
+          <div
+            class="dotkey"
+            aria-label="Student coverage compared with A plus B"
+          >
+            <div>
+              <i class="swatch kept"></i>Still reached<strong
+                id="kept"
+              ></strong>
+            </div>
+            <div>
+              <i class="swatch gained"></i>Newly reached<strong
+                id="gained"
+              ></strong>
+            </div>
+            <div>
+              <i class="swatch lost"></i>Lost coverage<strong
+                id="lost"
+              ></strong>
+            </div>
+            <div>
+              <i class="swatch neither"></i>Outside both plans<strong
+                id="neither"
+              ></strong>
+            </div>
+          </div>
+          <p class="basenote">
+            Compared with the two busiest crossings, <b id="baseline-name"></b>.
+          </p>
+          <button id="compare" class="primary"></button>
+          <p id="delta" class="sr-only" role="status"></p>
+        </section>
+      </div>
+      <section class="overlap" aria-labelledby="overlap-title">
+        <div class="overlapcopy">
+          <h2 id="overlap-title">Who gets counted twice?</h2>
+          <p id="detail"></p>
+        </div>
+        <div id="equation" class="equation"></div>
+      </section>
+      <details class="pairtable" id="all-plans">
+        <summary>
+          <span>Explore all <b id="pair-count"></b> placements</span
+          ><span id="rank"></span>
+        </summary>
+        <div class="pairbody">
+          <div class="pairguide">
+            <h3>Choose any pair</h3>
+            <p>
+              The number in each cell is the students reached. Darker cells
+              reach more students.
+            </p>
+            <a href="./simulation.json" download
+              >Download the 100 simulated routes</a
+            >
+          </div>
+          <div class="tablewrap">
+            <table
+              id="matrix"
+              aria-label="Students reached for each pair of crossings"
+            ></table>
+          </div>
+        </div>
+      </details>
+      <section id="evidence" class="evidence">
+        <div class="sectionhead">
+          <p class="eyebrow">
+            <span class="line"></span>Public evidence · QoreChain Diana
+          </p>
+          <h2>Can you verify the count?</h2>
+          <p>
+            Three client processes on one computer submitted a separate survey
+            on testnet. Open the signed round, then remove a wallet’s
+            contribution and try again.
+          </p>
+        </div>
+        <div class="proofdesk">
+          <div class="proofintro">
+            <p class="eyebrow">Signed survey</p>
+            <h3>Diana round</h3>
+            <dl class="metadata">
+              <div>
+                <dt>Network</dt>
+                <dd>qorechain-diana</dd>
+              </div>
+              <div>
+                <dt>Anchor</dt>
+                <dd>
+                  <a
+                    href="https://api-testnet.qore.host/cosmos/tx/v1beta1/txs/{{dianaAnchor}}"
+                    >{{shortAnchor}}</a
+                  >
+                </dd>
+              </div>
+            </dl>
+            <button class="primary" id="inspect">Verify signed round</button>
+            <a
+              id="bundle"
+              href="./diana.json"
+              data-commitment="{{dianaCommitment}}"
+              download
+              >Download signed JSON</a
+            >
+          </div>
+          <div class="ledger" id="inspection">
+            <div class="ledgerhead">
+              <h3>Contribution ledger</h3>
+              <span id="proof-state">Ready to check</span>
+            </div>
+            <p id="checks" role="status">
+              Run the verifier to check each wallet’s signature and match the
+              public round commitment.
+            </p>
+            <div id="ledger-data" hidden>
+              <div class="tablewrap">
+                <table class="wallets">
+                  <thead>
+                    <tr>
+                      <th scope="col">Wallet</th>
+                      <th scope="col">A + B</th>
+                      <th scope="col">A + C</th>
+                    </tr>
+                  </thead>
+                  <tbody id="wallets"></tbody>
+                  <tfoot id="proof-totals" hidden>
+                    <tr>
+                      <th scope="row">Students reached</th>
+                      <td id="proof-ab"></td>
+                      <td id="proof-ac"></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <p id="mask-note">
+                Wallet rows show signed, masked numbers. Adding each column
+                modulo 2³² cancels the masks.
+              </p>
+              <button class="secondary" id="omit">Omit one contribution</button>
+            </div>
+          </div>
+        </div>
+        <div class="prooflinks">
+          <a
+            href="https://github.com/tang-vu/blind-crossing/releases/download/diana-round-1/blind-crossing-diana-round-1.zip"
+            >Offline verification kit</a
+          >
+          <a href="./verify-round.mjs" download>Standalone verifier</a>
+          <a
+            href="https://api-testnet.qore.host/cosmos/tx/v1beta1/txs/{{dianaAnchor}}"
+            >Diana receipt</a
+          >
+          <a href="https://explore.qore.network/tx/{{dianaAnchor}}"
+            >Explorer (select Testnet)</a
+          >
+        </div>
+        <div class="liveinvite">
+          <div>
+            <h3>Try a private survey with your group.</h3>
+            <p>
+              Invite 3–12 adults by QR and use hypothetical routes. Adult field
+              trials on separate devices are pending.
+            </p>
+          </div>
+          <div class="invitelinks">
+            <a class="roomlink" href="./room.html">Open a live room</a
+            ><a href="./lab.html">Try it on one device</a>
+          </div>
         </div>
       </section>
-      <section class="panel reach" aria-label="Student reach">
-        <div class="pairline"><h2>Student reach</h2><span class="pairflag" id="pair-label"></span></div>
-        <div class="scoreline"><p class="score"><strong id="score"></strong><span> / <span id="size"></span></span></p>
-          <span id="difference" class="difference" hidden></span></div>
-        <p class="scorelabel">students pass at least one guarded crossing</p>
-        <figure class="distribution"><div id="marks" aria-hidden="true"></div>
-          <figcaption>Each dot is one simulated student.</figcaption></figure>
-        <div class="dotkey" aria-label="Student coverage compared with A plus B">
-          <div><i class="swatch kept"></i>Still reached<strong id="kept"></strong></div>
-          <div><i class="swatch gained"></i>Newly reached<strong id="gained"></strong></div>
-          <div><i class="swatch lost"></i>Lost coverage<strong id="lost"></strong></div>
-          <div><i class="swatch neither"></i>Outside both plans<strong id="neither"></strong></div>
-        </div>
-        <p class="basenote">Compared with the two busiest crossings, <b id="baseline-name"></b>.</p>
-        <button id="compare" class="primary"></button>
-        <p id="delta" class="sr-only" role="status"></p>
-      </section>
-    </div>
-    <section class="overlap" aria-labelledby="overlap-title">
-      <div class="overlapcopy"><h2 id="overlap-title">Who gets counted twice?</h2><p id="detail"></p></div>
-      <div id="equation" class="equation"></div>
-    </section>
-    <details class="pairtable" id="all-plans">
-      <summary><span>Explore all <b id="pair-count"></b> placements</span><span id="rank"></span></summary>
-      <div class="pairbody"><div class="pairguide"><h3>Choose any pair</h3>
-        <p>The number in each cell is the students reached. Darker cells reach more students.</p>
-        <a href="./simulation.json" download>Download the 100 simulated routes</a></div>
-        <div class="tablewrap"><table id="matrix" aria-label="Students reached for each pair of crossings"></table></div>
+    </main>
+    <footer>
+      <div class="frame">
+        <span>Blind Crossing</span
+        ><a href="./planner-walkthrough.mp4">Watch the walkthrough</a
+        ><a href="https://github.com/tang-vu/blind-crossing"
+          >Source &amp; protocol</a
+        >
       </div>
-    </details>
-    <section id="evidence" class="evidence">
-      <div class="sectionhead"><p class="eyebrow"><span class="line"></span>Public evidence · QoreChain Diana</p>
-        <h2>Can you verify the count?</h2>
-        <p>Three client processes on one computer submitted a separate survey on testnet. Open the signed round, then remove a wallet’s contribution and try again.</p></div>
-      <div class="proofdesk">
-        <div class="proofintro"><p class="eyebrow">Signed survey</p><h3>Diana round</h3>
-          <dl class="metadata"><div><dt>Network</dt><dd>qorechain-diana</dd></div><div><dt>Anchor</dt><dd><a href="https://api-testnet.qore.host/cosmos/tx/v1beta1/txs/{{dianaAnchor}}">{{shortAnchor}}</a></dd></div></dl>
-          <button class="primary" id="inspect">Verify signed round</button>
-          <a id="bundle" href="./diana.json" data-commitment="{{dianaCommitment}}" download>Download signed JSON</a>
-        </div>
-        <div class="ledger" id="inspection">
-          <div class="ledgerhead"><h3>Contribution ledger</h3><span id="proof-state">Ready to check</span></div>
-          <p id="checks" role="status">Run the verifier to check each wallet’s signature and match the public round commitment.</p>
-          <div id="ledger-data" hidden>
-            <div class="tablewrap"><table class="wallets"><thead><tr><th scope="col">Wallet</th><th scope="col">A + B</th><th scope="col">A + C</th></tr></thead><tbody id="wallets"></tbody>
-            <tfoot id="proof-totals" hidden><tr><th scope="row">Students reached</th><td id="proof-ab"></td><td id="proof-ac"></td></tr></tfoot></table></div>
-            <p id="mask-note">Wallet rows show signed, masked numbers. Adding each column modulo 2³² cancels the masks.</p>
-            <button class="secondary" id="omit">Omit one contribution</button>
-          </div>
-        </div>
-      </div>
-      <div class="prooflinks">
-        <a href="https://github.com/tang-vu/blind-crossing/releases/download/diana-round-1/blind-crossing-diana-round-1.zip">Offline verification kit</a>
-        <a href="./verify-round.mjs" download>Standalone verifier</a>
-        <a href="https://api-testnet.qore.host/cosmos/tx/v1beta1/txs/{{dianaAnchor}}">Diana receipt</a>
-        <a href="https://explore.qore.network/tx/{{dianaAnchor}}">Explorer (select Testnet)</a>
-      </div>
-      <div class="liveinvite"><div><h3>Try a private survey with your group.</h3><p>Invite 3–12 adults by QR and use hypothetical routes. Adult field trials on separate devices are pending.</p></div>
-        <div class="invitelinks"><a class="roomlink" href="./room.html">Open a live room</a><a href="./lab.html">Try it on one device</a></div></div>
-    </section>
-  </main>
-  <footer><div class="frame"><span>Blind Crossing</span><a href="./planner-walkthrough.mp4">Watch the walkthrough</a><a href="https://github.com/tang-vu/blind-crossing">Source &amp; protocol</a></div></footer>
-  <script type="module" src="./planner.js"></script>
-</body>
+    </footer>
+    <script type="module" src="./planner.js"></script>
+  </body>
 </html>

@@ -15,10 +15,14 @@ export function setupProof() {
       member.title = address;
       member.setAttribute("aria-label", address);
       row.append(member);
-      const contribution = packet.contributions.find(c => c.body.sender === address);
+      const contribution = packet.contributions.find(
+        (c) => c.body.sender === address,
+      );
       for (const [i] of packet.round.options.entries()) {
         const cell = row.insertCell();
-        cell.textContent = contribution ? fmt.format(contribution.body.values[i]) : "Missing";
+        cell.textContent = contribution
+          ? fmt.format(contribution.body.values[i])
+          : "Missing";
         if (!contribution) row.classList.add("missing");
       }
       return row;
@@ -39,10 +43,20 @@ export function setupProof() {
       let downloaded = archive;
       if (!downloaded) {
         const response = await fetch($("bundle").href);
-        if (!response.ok) throw Error("The signed JSON could not be downloaded (HTTP " + response.status + ").");
+        if (!response.ok)
+          throw Error(
+            "The signed JSON could not be downloaded (HTTP " +
+              response.status +
+              ").",
+          );
         downloaded = await response.json();
       }
-      const packet = removeMember ? { ...downloaded, contributions: downloaded.contributions.slice(0, -1) } : downloaded;
+      const packet = removeMember
+        ? {
+            ...downloaded,
+            contributions: downloaded.contributions.slice(0, -1),
+          }
+        : downloaded;
       omitted = removeMember;
       if (removeMember) showRows(packet);
       const totals = verifyBundle(packet, $("bundle").dataset.commitment);
@@ -53,7 +67,9 @@ export function setupProof() {
       $("proof-totals").hidden = false;
       $("proof-state").textContent = "Verified";
       $("inspection").dataset.state = "verified";
-      $("checks").textContent = "All " + packet.round.members.length +
+      $("checks").textContent =
+        "All " +
+        packet.round.members.length +
         " wallet signatures and the pinned round commitment verified.";
     } catch (err) {
       $("proof-state").textContent = "Refused";
@@ -61,8 +77,12 @@ export function setupProof() {
       $("checks").textContent = "Verification refused. " + err.message;
     } finally {
       button.disabled = omit.disabled = false;
-      omit.textContent = omitted ? "Restore contribution and verify" : "Omit one contribution";
-      button.textContent = archive ? "Verify complete round" : "Retry verification";
+      omit.textContent = omitted
+        ? "Restore contribution and verify"
+        : "Omit one contribution";
+      button.textContent = archive
+        ? "Verify complete round"
+        : "Retry verification";
     }
   }
   button.onclick = () => check(false);
