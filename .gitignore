@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.private/
+.qa/
+.env
+.env.*
+*.pem
+*.key
+*.[bB][aA][kK]
+[aA][gG][eE][nN][tT]*.[mM][dD]
+[cC][lL][aA][uU][dD][eE]*.[mM][dD]
+[gG][eE][mM][iI][nN][iI]*.[mM][dD]
