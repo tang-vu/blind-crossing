@@ -1,167 +1,131 @@
-import { checksum, hash, manifest } from "../src/format.mjs";
+import { manifest, hash, checksum } from "../src/format.mjs";
 import { verifyBundle } from "../src/verify.mjs";
+import { points } from "../src/simulation.mjs";
 
 const $ = (id) => document.getElementById(id);
-const phase = $("phase");
-const status = $("lab-status");
-const cards = [...document.querySelectorAll(".households li")];
-let households = [];
-let fileUrl;
+const walletLabels = document.querySelectorAll(".households code");
+let workers = [];
+let round;
+let downloadURL;
+let generation = 0;
 
-for (const point of "ABCDEFGH") {
+function stopWorkers() {
+  for (const worker of workers) worker.terminate();
+  workers = [];
+}
+
+function revokeDownload() {
+  if (downloadURL) URL.revokeObjectURL(downloadURL);
+  downloadURL = undefined;
+  $("lab-download").removeAttribute("href");
+}
+
+// Each wallet processes one request at a time. A failure invalidates the whole round.
+function request(worker, command, data) {
+  return new Promise((resolve, reject) => {
+    const finish = (callback, value) => {
+      clearTimeout(timer);
+      worker.onmessage = worker.onerror = worker.onmessageerror = null;
+      callback(value);
+    };
+    const timer = setTimeout(() => finish(reject, Error("A wallet timed out.")), 60000);
+    worker.onerror = worker.onmessageerror = () => finish(reject, Error("A wallet could not complete the operation."));
+    worker.onmessage = ({ data: reply }) =>
+      reply.error ? finish(reject, Error(reply.error)) : finish(resolve, reply.result);
+    worker.postMessage({ command, data });
+  });
+}
+
+function reset() {
+  generation++;
+  stopWorkers();
+  revokeDownload();
+  round = undefined;
+  $("lab-result").hidden = $("lab-picker").hidden = true;
+  $("prepare").hidden = $("prepare").disabled = $("sign").disabled = false;
+  $("lab-status").textContent = "";
+  $("phase").textContent = "Ready";
+  for (const input of $("options").querySelectorAll("input")) input.checked = false;
+  for (const label of walletLabels) {
+    label.textContent = "";
+    label.removeAttribute("title");
+  }
+}
+
+function fail(error) {
+  reset();
+  $("phase").textContent = "Round stopped";
+  $("lab-status").textContent = error.message + " Start again to create fresh wallets.";
+}
+
+for (const point of points) {
   const label = document.createElement("label");
   const box = document.createElement("input");
   box.type = "checkbox";
   box.value = point;
-  label.className = "choice";
   label.append(box, point);
   $("options").append(label);
 }
 
-function setPhase(text, state) {
-  phase.textContent = text;
-  phase.dataset.state = state;
-}
-
-function openHousehold() {
-  const worker = new Worker(new URL("./lab-client.mjs", import.meta.url), {
-    type: "module",
-  });
-  const inbox = [];
-  let pending = null;
-  worker.onmessage = (event) => {
-    if (pending) {
-      const current = pending;
-      pending = null;
-      if (event.data.error) current.reject(Error(event.data.error));
-      else current.resolve(event.data.result);
-    } else inbox.push(event.data);
-  };
-  worker.onerror = () => {
-    pending?.reject(Error("A household worker stopped."));
-    pending = null;
-  };
-  return {
-    worker,
-    member: null,
-    call(message) {
-      return new Promise((resolve, reject) => {
-        const deliver = (data) => {
-          if (data.error) reject(Error(data.error));
-          else resolve(data.result);
-        };
-        if (!message && inbox.length) {
-          deliver(inbox.shift());
-          return;
-        }
-        if (pending) {
-          reject(Error("Household is busy"));
-          return;
-        }
-        pending = { resolve, reject };
-        if (message) worker.postMessage(message);
-      });
-    },
-  };
-}
-
-function closeHouseholds() {
-  for (const household of households) household.worker.terminate();
-  households = [];
-}
-
-function shorten(address) {
-  return address.slice(0, 8) + "…" + address.slice(-4);
-}
-
 $("prepare").onclick = async () => {
+  const run = generation;
   $("prepare").disabled = true;
-  setPhase("Creating wallets", "working");
-  status.textContent = "Creating three wallets on this device. This takes a few seconds.";
+  $("phase").textContent = "Creating wallets";
+  $("lab-status").textContent = "Generating fresh signing and encryption keys in each worker…";
   try {
-    households = [openHousehold(), openHousehold(), openHousehold()];
-    const members = await Promise.all(households.map((household) => household.call()));
-    members.forEach((member, index) => {
-      households[index].member = member;
-      const code = cards[index].querySelector("code");
-      code.textContent = shorten(member.address);
-      code.title = member.address;
+    for (let i = 0; i < walletLabels.length; i++) {
+      workers.push(new Worker(new URL("./lab-client.js", document.baseURI), { type: "module" }));
+    }
+    const members = await Promise.all(workers.map((w, i) => request(w, "create", i)));
+    round = manifest(members, "rehearsal");
+    const digest = hash(round);
+    const accepted = await Promise.all(workers.map(w => request(w, "accept", round)));
+    if (!accepted.every(d => d === digest)) throw Error("Wallets disagree on the round.");
+    $("phase").textContent = "Exchanging secrets";
+    const packets = (await Promise.all(workers.map(w => request(w, "exchange")))).flat();
+    await Promise.all(workers.map((w, i) =>
+      request(w, "receive", packets.filter(p => p.body.receiver === members[i].address))));
+    members.forEach(({ address }, i) => {
+      walletLabels[i].textContent = address.slice(0, 7) + "…" + address.slice(-6);
+      walletLabels[i].title = address;
     });
-    $("prepare").hidden = true;
+    $("phase").textContent = "Ready to sign";
+    $("lab-status").textContent = "All three wallets agreed on the questions and exchanged encrypted pair secrets.";
     $("lab-picker").hidden = false;
-    setPhase("Choose a route", "ready");
-    status.textContent = "Your wallet is ready. The sample households stay on C and D.";
+    $("prepare").hidden = true;
+    $("options").querySelector("input").focus({ preventScroll: true });
   } catch (error) {
-    closeHouseholds();
-    $("prepare").disabled = false;
-    setPhase("Stopped", "failed");
-    status.textContent = error.message;
+    if (generation === run) fail(error);
   }
 };
 
 $("sign").onclick = async () => {
-  const route = [...$("options").querySelectorAll("input:checked")].map((box) => box.value);
-  const routes = [route, ["C"], ["D"]];
+  const run = generation;
   $("sign").disabled = true;
-  setPhase("Counting", "working");
-  status.textContent = "The three workers are exchanging masks and signing.";
+  $("phase").textContent = "Signing";
+  $("lab-status").textContent = "Checking each signed contribution…";
   try {
-    const round = manifest(
-      households.map((household) => household.member),
-      "rehearsal",
-    );
-    const digests = await Promise.all(
-      households.map((household) => household.call({ cmd: "accept", round })),
-    );
-    if (!digests.every((digest) => digest === hash(round))) {
-      throw Error("The workers committed to different rounds.");
-    }
-    const packets = (
-      await Promise.all(households.map((household) => household.call({ cmd: "exchange" })))
-    ).flat();
-    const contributions = await Promise.all(
-      households.map((household, index) =>
-        household.call({
-          cmd: "contribute",
-          route: routes[index],
-          packets: packets.filter(
-            (packet) => packet.body.receiver === household.member.address,
-          ),
-        }),
-      ),
-    );
-    contributions.sort((a, b) => (a.body.sender < b.body.sender ? -1 : 1));
+    const route = Array.from($("options").querySelectorAll(":checked"), box => box.value);
+    const contributions = await Promise.all(workers.map((w, i) => request(w, "sign", i === 0 ? route : undefined)));
+    contributions.sort((a, b) => a.body.sender < b.body.sender ? -1 : 1);
     const bundle = { round, contributions };
     bundle.commitment = checksum(bundle);
-    const counts = verifyBundle(bundle);
-    $("lab-ab").textContent = counts.AB;
-    $("lab-ac").textContent = counts.AC;
-    cards[0].querySelector("span").textContent = route.length
-      ? "Route through " + route.join(" ")
-      : "Route passes none of these crossings";
-    if (fileUrl) URL.revokeObjectURL(fileUrl);
-    fileUrl = URL.createObjectURL(
-      new Blob([JSON.stringify(bundle, null, 2) + "\n"], { type: "application/json" }),
-    );
-    $("lab-download").href = fileUrl;
-    $("lab-picker").hidden = true;
+    const totals = verifyBundle(bundle);
+    const blob = new Blob([JSON.stringify(bundle) + "\n"], { type: "application/json" });
+    downloadURL = URL.createObjectURL(blob);
+    $("lab-download").href = downloadURL;
+    $("lab-ab").textContent = totals.AB;
+    $("lab-ac").textContent = totals.AC;
     $("lab-result").hidden = false;
-    setPhase("Verified", "done");
-    status.textContent =
-      "Verified 3 signed contributions. A + B reached " +
-      counts.AB +
-      "; A + C reached " +
-      counts.AC +
-      ".";
+    $("lab-picker").hidden = true;
+    $("phase").textContent = "Verified";
+    $("lab-status").textContent = "Verified three signed contributions. Round " + round.id + ".";
+    stopWorkers();
+    $("lab-download").focus({ preventScroll: true });
   } catch (error) {
-    $("sign").disabled = false;
-    setPhase("Stopped", "failed");
-    status.textContent = error.message;
+    if (generation === run) fail(error);
   }
 };
 
-$("reset").onclick = () => location.reload();
-addEventListener("pagehide", () => {
-  closeHouseholds();
-  if (fileUrl) URL.revokeObjectURL(fileUrl);
-});
+$("reset").onclick = () => { reset(); $("prepare").focus(); };
+window.addEventListener("pagehide", reset);
