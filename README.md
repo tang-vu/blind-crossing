@@ -12,6 +12,10 @@ Choose two school crossings. Reach the most students. Keep each family's route p
 
 Two crossing guards are available at fictional Oakfield School. Start with **A + B**. A reaches 60 students and B reaches 55, but 53 pass both, so the pair reaches **62 of 100**. Drag guard 2 to C, tap C or choose it from the menu. Only 10 students pass both A and C. The new pair reaches **90 of 100**, an increase of **28** with the same staff. The comparison button also works when you arrive at the best pair first.
 
+Each dot follows the same simulated student as you move a guard. Moving B to C keeps 60 students covered, reaches 30 new students and leaves 2 previously covered students outside the plan. Open **Explore all 28 placements** to compare any pair, then copy the page URL to share that placement.
+
+To try the encryption by yourself, open the single-device rehearsal. It creates three fresh wallets in separate browser workers. Choose fictional crossings for your household, sign the round and download the result. Run `node verify-round.mjs blind-crossing-local-round.json` to reproduce the totals offline. [Run a private round on this device](https://tang-vu.github.io/blind-crossing/lab.html)
+
 | Evidence | What has run |
 | --- | --- |
 | Planner | 100 deterministic fictional routes. The browser derives eight individual totals and all 28 pair totals. |

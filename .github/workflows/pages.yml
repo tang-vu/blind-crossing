@@ -27,6 +27,14 @@ jobs:
       - run: npm run build
       - name: Verify the Diana round and seven committed transactions on this runner
         run: node dist/verify-round.mjs dist/diana.json --chain --expect=c4bb29c20c627198f7b07895448ea165a81bc785c99a3b55d97297eaae51bbcf
+      - run: npx playwright install --with-deps --only-shell chromium
+      - name: Exercise every placement, the Diana ledger and fresh private rounds
+        run: |
+          node scripts/serve.mjs &
+          server=$!
+          trap 'kill "$server"' EXIT
+          curl --retry 8 --retry-connrefused -fsS http://127.0.0.1:4173/ -o /dev/null
+          node tests/browser-planner.mjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

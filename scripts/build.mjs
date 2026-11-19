@@ -6,7 +6,7 @@ import { verifyEvidence } from "../src/network.mjs";
 
 await mkdir("dist", { recursive: true });
 const out = await build({
-  entryPoints: ["web/planner.mjs", "web/room.mjs"],
+  entryPoints: ["web/planner.mjs", "web/room.mjs", "web/lab.mjs", "web/lab-client.mjs"],
   outdir: "dist",
   bundle: true,
   format: "esm",
@@ -20,9 +20,12 @@ const out = await build({
 });
 for (const name of [
   "room.html",
+  "lab.html",
+  "lab.css",
   "mark.svg",
   "map.svg",
   "style.css",
+  "planner.css",
 ])
   await copyFile("web/" + name, "dist/" + name);
 await copyFile("evidence/rehearsal.json", "dist/rehearsal.json");
@@ -35,6 +38,7 @@ verifyBundle(round);
 const status = { anchor: await verifyEvidence(round), members: round.round.members.length };
 const planner = (await readFile("web/index.html", "utf8"))
   .replaceAll("{{dianaAnchor}}", status.anchor)
+  .replaceAll("{{shortAnchor}}", status.anchor.slice(0, 6) + "…" + status.anchor.slice(-6))
   .replaceAll("{{dianaCommitment}}", round.commitment);
 await writeFile("dist/index.html", planner);
 await writeFile("dist/diana.json", archived);

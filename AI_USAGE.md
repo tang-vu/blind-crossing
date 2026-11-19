@@ -13,6 +13,8 @@ Blind Crossing was built by solo entrant `tang-vu` with OpenAI Codex as a coding
 
 ## Human actions and independent checks
 
+Codex added a comparison grid that follows all 100 fictional students across all 28 placements, a signed contribution ledger and a one-device rehearsal using three real browser workers. Browser tests compare every student’s displayed coverage with the simulated routes, restore the omitted Diana signature and independently verify newly downloaded rehearsal packets. [Browser checks](tests/browser-planner.mjs)
+
 The entrant obtained faucet funds, connected their own GitHub, X and QoreX accounts, and created the competition entry. Once the test wallet was funded, Codex ran the registration and anchoring scripts against Diana. The three client processes ran on one computer. A separate GitHub Actions runner checked the signatures, six key registrations and anchor transaction, and reproduced **AB = 1** and **AC = 2** for that three-member round. [Diana bundle](evidence/diana.json) · [Independent verification run](https://github.com/tang-vu/blind-crossing/actions/runs/44540435357)
 
 The public planner uses 100 simulated routes. The browser tests used isolated sessions on one computer. At the time this record was written, the adult field trial on separate devices and the first-time-user comprehension test were still pending.
