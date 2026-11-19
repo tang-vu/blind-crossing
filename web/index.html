@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#173d38"><meta name="description" content="Place two school crossing guards on a fictional map and compare student reach using private survey totals.">
+<title>Blind Crossing · Crossing planner</title><link rel="icon" href="./mark.svg"><link rel="stylesheet" href="./style.css"></head>
+<body>
+<header><div class="frame mast"><a class="brand" href="./"><img src="./mark.svg" alt="">Blind Crossing</a>
+<nav aria-label="Main navigation"><a href="./" aria-current="page">Planner</a><a href="./room.html">Live room</a><a href="#evidence">Evidence</a></nav></div></header>
+<main class="frame"><section class="lead"><div><p class="eyebrow"><span class="line"></span> School crossing planner</p><h1>Where should the guards stand?</h1>
+<p>Place two guards at dismissal. See how many students pass at least one guarded crossing.</p></div></section>
+<div class="board"><section class="mapcard" aria-label="Interactive crossing map">
+<div class="cardhead"><h2>Oakfield School</h2><span class="tag">Fictional map</span></div>
+<div class="map" id="map"><img src="./map.svg" alt="Street map around fictional Oakfield School" draggable="false"><div id="markers"></div>
+<span class="north" aria-hidden="true">↑ N</span></div>
+<div class="legend"><span><i class="guardkey"></i>Guard on duty</span><span><i class="openkey"></i>Available crossing</span></div>
+</section>
+<section class="panel" aria-labelledby="plan-title"><div class="panelhead"><p class="eyebrow">Current plan</p><h2 id="plan-title">Student reach</h2></div>
+<div class="score" aria-live="polite"><strong id="score"></strong><span> / <span id="size"></span></span></div>
+<p class="scorelabel">students pass a guarded crossing</p><div class="meter"><div id="meter"></div></div>
+<div class="guards"><label>Guard 1<select id="g1"></select></label><label>Guard 2<select id="g2"></select></label></div>
+<p id="detail"></p><button id="compare" class="primary"></button><p class="note" id="delta" role="status">Counts come from 100 simulated routes.</p>
+</section></div>
+<p class="hint">Drag a guard to another crossing, or use the two menus. Tap an empty crossing to move the selected guard.</p>
+<section id="evidence" class="evidence"><div class="sectionhead"><p class="eyebrow">Public evidence</p><h2>Check the count yourself.</h2></div>
+<div class="proofgrid"><article><h3>100 simulated routes</h3><p>Recreate every single-crossing and two-crossing total from the fictional routes used in this planner.</p>
+<a href="./simulation.json" download>Download simulation data</a></article>
+<article><h3 id="runTitle">Signed three-client rehearsal</h3><p id="runInfo">Three processes on one computer exchanged masked contributions. The verifier checks signatures and reports any missing member.</p>
+<a id="bundle" href="./rehearsal.json" download>Download signed round</a> <button class="textbutton" id="inspect">Check bundle</button></article></div>
+<div id="inspection" hidden><p id="checks" role="status"></p><button class="secondary" id="omit">Try omitting one member</button><a href="https://github.com/tang-vu/blind-crossing#independent-verification">Run the standalone verifier</a></div>
+<p class="note" id="physical">Adult field trial pending. Confirmed participant devices in field trials: 0.</p></section>
+</main><footer><div class="frame"><span>Blind Crossing</span><a href="https://github.com/tang-vu/blind-crossing">Source &amp; protocol</a></div></footer><script type="module" src="./planner.js"></script></body></html>
